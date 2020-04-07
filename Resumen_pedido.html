@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head>
+<meta name="Descripción" content="Controla maneja edita los pedidos a tus proveedores.">
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+
+<title>AnotaPed</title>
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+
+
+<script type="module">
+import "./node_modules/@vaadin/vaadin-button/vaadin-button.js";
+import "./node_modules/@polymer/iron-icon/iron-icon.js";
+import "./node_modules/@polymer/iron-icons/iron-icons.js";
+import "./node_modules/@vaadin/vaadin-icons/vaadin-icons.js";
+import "./node_modules/@vaadin/vaadin-text-field/vaadin-text-field.js";
+import "./styles/style_general.js";
+</script>
+<!--<link rel="import" href="../bower_components/polymer/polymer.html">
+ 
+  <link rel="import" href="../bower_components/vaadin-lumo-styles/icons.html">
+   <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+  <link rel="import" href="../bower_components/paper-spinner-master/paper-spinner.html">
+  <link rel="import" href="../bower_components/vaadin-combo-box-master/vaadin-combo-box.html">
+    <link rel="import" href="../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+-->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./styles/style_page.css">
+<link rel="shortcut icon" type="image/png" href="images/favicon.png">
+<style>
+    #centro{
+        margin: 0 auto;
+        width: 100%;
+    }
+    #botones{
+        margin: 0 auto;
+        width: 50%;
+    }
+    vaadin-text-field {
+        width: 100%;
+        font-size: 12px;
+    }
+
+    #tabla_resumen {
+        border-collapse: collapse;
+        width:100%}
+    #tabla_resumen td {
+        border-bottom:1pt solid #CCC;
+    }
+
+    #tabla_resumen th{
+        text-align:left;
+    }	
+    #tabla_resumen .euro{
+        text-align:right;
+    }	
+    @media only screen and (min-width: 768px) {
+        #centro{
+        width: 30%;}
+
+        #tabla_resumen {
+            width:100%
+        }
+        vaadin-text-field{
+            font-size: 14px;
+        }
+    }
+    
+</style>
+</head>
+<body onload="control_titulos();load_pagina();">
+    <div class="topnav" id="myTopnav">
+        <div class="sesion">
+            <label >"Usuario</label>
+        </div>
+    </div>
+    <div id="contenedor" style="position:relative;">
+        <center><div id="subtitulo">Nuevo Pedido</div></center>
+        <div id="centro">
+    </div>
+
+    <div id="loader" style="visibility: hidden;" ></div>
+<script>
+function control_titulos(){
+	var obj = localStorage.getItem("datos") ;
+    if (obj['Regalo'] == true){
+        document.getElementById("subtitulo").innerHTML = document.getElementById("subtitulo").innerHTML  + " Regalo";
+    }
+
+}
+
+function load_pagina(){
+    var i = 0;
+    var total_general = 0;
+    var obj = JSON.parse(localStorage.getItem("datos"));
+    var capa = document.getElementById("centro");
+
+    for(var prov = 0;prov < obj['Proveedores'].length;prov++){
+        var proveedor = obj['Proveedores'][prov];
+        if(i > 0){
+            var br = document.createElement("div");
+            br.innerHTML="</br>";
+            capa.appendChild(br);
+        }
+        var l_fecha = new Date().toISOString().split("T")[0];
+        var tabla = document.createElement("div");
+        var l_texto;
+        l_texto = "<table><tr><td><img src='images/list.png'/></td><td>Proveedor: " + proveedor.Proveedor + "</br>Fecha: " + l_fecha + "</br>Importe: " + proveedor.Importe + "&euro;</td></tr></table>";
+        l_texto += "<vaadin-text-field id='txt_notas_"+ proveedor.Proveedor +"' label='Notas'></vaadin-text-field>";
+        tabla.innerHTML = l_texto;
+        capa.appendChild(tabla);
+       
+        var tabla_resumen = document.createElement("div");
+        var l_texto;
+        l_texto = "<table id='tabla_resumen'><th>Producto</th><th>Ctd.</th><th class='euro'>&euro;</th>";
+            
+            for(var ped = 0;ped < obj['Lista'].length;ped++){
+            var pedido = obj['Lista'][ped];
+            if (proveedor.Proveedor == pedido.Proveedor)
+            {
+                total_general = total_general + parseFloat(pedido.Importe_total.replace(",","."));
+                console.log(total_general);
+                l_texto += "<tr><td>"+pedido.Producto+"</td><td>"+ pedido.Uds + pedido.Unidad + "</td><td align='right'>" + pedido.Importe_total + "&euro;</td></tr>";
+             }
+
+        }
+        for(var total_index = 0;total_index < obj['Totales'].length;total_index++){
+            var total = obj['Totales'][total_index];
+            if (proveedor.Proveedor == total.Proveedor ){
+            l_texto +=  "<tr><td>" + total.Producto + "</td><td>"+ total.Uds + total.Unidad + "</td><td align='right'>"+ total.Importe+"&euro;</td></tr>";
+            }
+        }
+        
+
+        l_texto += "</table>";
+        tabla_resumen.innerHTML = l_texto;
+        capa.appendChild(tabla_resumen);
+
+        i = i + 1;
+
+    
+    }
+    var final = document.createElement("div");
+    var l_texto;
+    l_texto = "</br><b>Total Pedidos: "+ total_general.toString().replace(".",",")+ "€</b>";
+    l_texto += "</br><div id='botones'><center><vaadin-button id='cancel-button' onclick='cancelar()' theme='icon' aria-label='Cancelar'><iron-icon icon='cancel'></iron-icon>Cancelar</vaadin-button>&nbsp;";
+    l_texto +="<vaadin-button id='save-button' onclick='guardar()' theme='icon' aria-label='Guardar'><iron-icon icon='save'></iron-icon>Guardar</vaadin-button></center></div>";
+    final.innerHTML = l_texto;
+    capa.appendChild(final);
+
+}
+function cancelar() {
+close();
+}
+
+function guardar() {
+    var sp_load = document.getElementById("loader");
+    sp_load.style.visibility = "visible";
+    return;
+	var obj = JSON.parse(localStorage.getItem("datos")) ;
+	var lista_pedidos_agrup = [];
+	var lista_productos = [];
+	lista_pedidos_agrup = obj['Proveedores'];
+	lista_productos = obj['Lista'];
+	var cabeceras = [];
+	var detalles = [];
+	var l_regalo = obj['Regalo'];
+	console.log("Regalo"+l_regalo);
+	var d = new Date();
+	var month = '' + (d.getMonth() + 1).toString();
+	var day = '' + d.getDate().toString();
+	var year = d.getFullYear().toString();
+	var hour = d.getHours().toString();
+	var minutes = d.getMinutes().toString();
+	var seconds = d.getSeconds().toString();
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+	if (hour.length < 2) hour = '0' + hour;
+	if (minutes.length < 2) minutes = '0' + minutes;
+	if (seconds.length < 2) seconds = '0' + seconds;
+	l_fecha = year+"-"+month+"-"+day+" "+hour+":"+minutes+":"+seconds	
+	for (var i = 0; i < lista_pedidos_agrup.length; i++) {
+		var l_notas = document.getElementById("txt_notas_"+lista_pedidos_agrup[i].Proveedor).value;
+		cabeceras.push({Id_Pedido:-1,
+						Proveedor:lista_pedidos_agrup[i].Proveedor,
+						Importe:lista_pedidos_agrup[i].Importe.replace(",","."),
+						Fecha_prevista:"01-01-1900 00:00",
+						Fecha:l_fecha,
+						Notas: l_notas,
+						Regalo: l_regalo})
+	}
+	for (var i=0;i<lista_productos.length;i++){
+	detalles.push({Proveedor:lista_productos[i].Proveedor,
+				   Producto:lista_productos[i].Producto,
+				   Uds:parseFloat(lista_productos[i].Uds.replace(",",".")),
+				   Importe:parseFloat(lista_productos[i].Importe.replace(",","."))*parseFloat(lista_productos[i].Uds.replace(",",".")),
+				   Um:lista_productos[i].Unidad,
+				   Referencia:lista_productos[i].Referencia});
+	}
+ var values = { Login:[{email: 'a',pass:'f47b788dcaa1686c0920895ab53306700d0f97c34b9dc08aa1f6847e5032b892932013608eda4193e03c2e409dac57debf692b16d2587d61e958fb1984c9bea3'}],Cabeceras:cabeceras,Detalles:detalles};
+							var self = this;
+						$.ajax({
+								type: "POST",
+								contentType: "application/json; charset=utf-8",
+								url: "../../Guardar_pedidos.php",
+								traditional: true,   //must be tru for arrray to be send 
+								data: JSON.stringify(values),
+								dataType: "json",
+								success: function (Data) {
+ 									sp_load.style.visibility = "hidden";
+									//data_delete =[];
+										// here comes your response after calling the server
+										if (Data.Lista[0].Resultado === "NOOK"){
+											for(var i = 0; i<Data.Lista[1].Errores.length;i++){
+											alert(Data.Lista[1].Errores[i].Error);
+											}
+										}else{
+                                            alert("Datos guardados correctamente.");
+                                            localStorage.clear();
+											close();
+											//self._consultar();
+											}
+									},
+									error: function (jqXHR, textStatus, errorThrown) {
+										sp_load.style.visibility = "hidden";
+										alert("Error de conexión.No se han guardado los datos");
+									}
+								});			 
+
+}
+</script>
+</body>
+</html>
+

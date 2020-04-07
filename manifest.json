@@ -1,0 +1,25 @@
+{
+  "name": "antoaped",
+  "short_name": "anotapedApp",
+  "description": "Maneja los pedidos con tus proveedores. Controla tu negocio en tiempo real. ",
+  "background_color": "#2B2B2B",
+  "theme_color": "#dc0018",
+  "orientation": "portrait",
+  "display": "fullscreen",
+  "start_url": "./?utm_source=web_app_manifest",
+  "scope": "./",
+  "lang": "es-ES",
+  "icons": 
+  [
+    {
+      "src": "./images/favicon.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+        "src": "./images/favicon_192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }
+  ]
+}

@@ -1,0 +1,174 @@
+<!--
+******PENDIENTE******
+- LOGIN
+- Controlar introducción uds y precio en EditarProductos
+- Añadir producto en NuevoRecuento
+-->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Anotaped</title>
+  <meta name="description" content="Maneja los pedidos con tus proveedores. Controla tu negocio en tiempo real.">
+
+  <meta name="theme-color" content="#dc0018">
+  <meta name="MobileOptimized" content="width">
+  <meta name="HandheldFriendly" content="true">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="shortcut icon" type="image/png" href="./images/favicon.png">
+  <link rel="apple-touch-icon" href="./images/favicon.png">
+  <link rel="apple-touch-startup-image" href="./images/favicon.png">
+  <link rel="manifest" href="./manifest.json">
+
+<!--<!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head>
+<meta name="Descripción" content="Controla maneja edita los pedidos a tus proveedores.">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+
+<title>AnotaPed</title>-->
+<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+<script src="sha1.js"></script>
+<!--
+<script src="./bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+<script src="./lib/firebugx.js"></script>
+-->
+<!--Acelera el listado Editar productos (falta mejorar que una vez aparecen los productos ya se puedan modificar, porque actualmente tarda unos segundos)-->
+<!--<script type="text/javascript" src="./node_modules/default-passive-events/dist/index.js"></script>-->
+<script type="module">
+import "./node_modules/@vaadin/vaadin-date-picker/vaadin-date-picker.js";
+import "./node_modules/@vaadin/vaadin-button/vaadin-button.js";
+import "./node_modules/@polymer/iron-icon/iron-icon.js";
+import "./node_modules/@polymer/iron-icons/iron-icons.js";
+import "./node_modules/@vaadin/vaadin-icons/vaadin-icons.js";
+import "./node_modules/@vaadin/vaadin-combo-box/vaadin-combo-box.js";
+import "./node_modules/@vaadin/vaadin-text-field/vaadin-text-field.js";
+import "./node_modules/@vaadin/vaadin-grid/all-imports.js";
+import "./styles/style_general.js";
+
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+<!-- css and favicon-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./styles/style_page.css">
+<link rel="shortcut icon" type="image/png" href="images/favicon.png">
+
+</head>
+<body>
+
+  <div class="topnav" id="myTopnav">
+  <button class="boton" id="btn_home" onclick="javascript:location.reload();">Inicio</button>
+  <button class="boton" id="btn_nuevo_pedido" onclick="javascript:enviar('<nuevo-pedido></nuevo-pedido>', 'Nuevo_pedido.js');">Nuevo Pedido</button>
+  <button class="boton" id="btn_lista_pedidos" onclick="javascript:enviar('<lista-pedidos></lista-pedidos>', 'Lista_pedidos.js');">Lista Pedidos</button>
+  <button class="boton" id="btn_nuevo_recuento" onclick="javascript:enviar('<nuevo-recuento></nuevo-recuento>', 'Nuevo_recuento.js');">Nuevo Recuento</button>
+  <button class="boton" id="btn_lista_recuentos" onclick="javascript:enviar('<lista-recuentos></lista-recuentos>', 'Lista_recuentos.js');">Lista Recuentos</button>
+  <button class="boton" id="btn_historial" onclick="javascript:enviar('<lista-compras></lista-compras>', 'Lista_compras.js');">Historial compras</button>
+  <button class="boton" id="btn_lista_precios" onclick="javascript:enviar('Lista_precios.php', 'contenedor');">Lista Precios</button>
+  <button class="boton" id="btn_lista_rapel" onclick="javascript:enviar('Lista_rapel.php', 'contenedor');">Lista Rapel</button>
+  <button class="boton" id="btn_rentabilidad" onclick="javascript:enviar('Lista_rentabilidad.php', 'contenedor');">Rentabilidad</button>  
+  <button class="boton" id="btn_rentabilidad" onclick="javascript:enviar('Lista_apuntes.php', 'contenedor');">Apuntes</button>  
+  <button class="boton" id="btn_rentabilidad" onclick="javascript:enviar('Lista_apuntes_mes.php', 'contenedor');">Balance/Mes</button>  
+  <button class="boton" id="btn_editar_productos" onclick="javascript:enviar('<editar-productos></editar-productos>', 'Editar_productos.js');">Editar Productos</button>
+  <button class="boton" id="btn_editar_proveedores" onclick="javascript:enviar('Editar_proveedores.php', 'contenedor');">Editar Proveedores</button>
+  <button class="boton" id="btn_editar_empleados" onclick="javascript:enviar('Editar_empleados.php', 'contenedor');">Editar Empleados</button>
+  <button class="boton" id="btn_lista_cajas" onclick="javascript:enviar('Lista_cajas.php', 'contenedor');">Lista Cajas</button>
+  <button class="boton" id="btn_lista_fichajes" onclick="javascript:enviar('Lista_fichajes.php', 'contenedor');">Lista Fichajes</button>
+  <button class="boton" id="btn_consumo" onclick="javascript:enviar('consumo_luz.php', 'contenedor');">Consumo Luz</button>
+  
+  <div class="sesion"><label onclick="javascript:enviar('Mis_datos.php', 'contenedor');myFunction();">"Usuario"</label><button class="boton" id="btn_salir" onclick="window.location.href = 'Logout.php'">Salir</button></div>
+  <a title="Menu" href="javascript:void(0);" class="icon" onclick="myFunction()">
+    <i class="fa fa-bars"></i>
+  </a>
+</div>
+
+<div id="contenedor" style="position:relative;">
+  <div id="parent_interior">
+      <div id="div_interior"><button class="boton_home" id="btn_nuevo_pedido_home" onclick="javascript:enviar('<nuevo-pedido></nuevo-pedido>', 'Nuevo_pedido.js');myFunction();"></button>
+      </div>
+      <div id="div_interior"><button class="boton_home" id="btn_lista_pedidos_home" onclick="javascript:enviar('<lista-pedidos></lista-pedidos>', 'Lista_pedidos.js');myFunction();"></button>
+      </div>
+  </div>
+
+  <div id="parent_interior">
+      <div id="div_interior"><button class="boton_home" id="btn_nuevo_recuento_home" onclick="javascript:enviar('<nuevo-recuento></nuevo-recuento>', 'Nuevo_recuento.js');myFunction();"></button>
+      </div>
+      <div id="div_interior"><button class="boton_home" id="btn_lista_recuentos_home" onclick="javascript:enviar('<lista-recuentos></lista-recuentos>', 'Lista_recuentos.js');myFunction();"></button>
+      </div>
+  </div>
+
+  <!--<div id="parent_interior">
+    <div id="div_interior"><button class="boton_home" id="btn_rentabilidad" onclick="javascript:enviar('Lista_apuntes.php', 'contenedor');myFunction();"></button>
+    </div>
+    <div id="div_interior"><button class="boton_home" id="btn_lista_cajas" onclick="javascript:enviar('Lista_cajas.php', 'contenedor');myFunction();"></button>
+    </div>
+  </div>-->
+</div>
+<div id="loader" style="visibility: hidden;" ></div>
+<script>function myFunction() {
+  var x = document.getElementById("myTopnav");
+
+  if (x.className === "topnav") {
+    x.className += " responsive";
+  } else {
+    x.className = "topnav";
+  }
+}
+
+function enviar(_pagina, capa) {
+  
+  var script = document.createElement('script');
+  script.src = capa;
+  script.type = "module";
+  script.async = false;
+  document.head.appendChild(script);
+  document.getElementById('contenedor').innerHTML = _pagina; //$('#' + capa).innerHTML = "<lista-pedidos></lista-pedidos>";
+
+  myFunction();
+}</script>
+
+<script src="sha1.js"></script>
+	<script>function cifrar() {
+  var values = {
+    Login: [{
+      email: document.getElementById("usuario").value,
+      pass: sha512(document.getElementById("pass").value)
+    }]
+  };
+  $.ajax({
+    type: "POST",
+    contentType: "application/json; charset=utf-8",
+    url: "../../Login.php",
+    traditional: true,
+    //must be tru for arrray to be send 
+    data: JSON.stringify(values),
+    dataType: "json",
+    success: function (Data) {
+      if (Data.Lista[0].Resultado === "NOOK") {
+        for (i = 0; i < Data.Lista[1].Errores.length; i++) {
+          alert(Data.Lista[1].Errores[i].Error);
+        }
+      } else {
+        //location.reload();
+        if (Data.Lista[2].Tipo === "ADMIN") {
+          location.href = 'index.html';
+        } else {
+          location.href = 'index_empleados.html';
+        }
+      }
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      alert("Error de conexión.Imposible obtener información " + JSON.stringify(textStatus));
+    }
+  });
+}</script>
+
+<script src="./script.js"></script>
+</body></html>
